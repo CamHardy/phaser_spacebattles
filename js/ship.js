@@ -16,6 +16,7 @@ function Ship(game, x, y) {
 	this.input.dragDistanceThreshold = 8;
 
 	game.physics.enable(this);
+	this.body.collideWorldBounds = true;
 	this.events.onInputDown.add(function () {this.alpha = 0.3; this.body.enable = false;}, this);
 	this.events.onInputUp.add(function () {this.alpha = 1; this.body.enable = true;}, this);
 }

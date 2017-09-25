@@ -26,9 +26,11 @@ PlayState.update = function () {
 }
 
 PlayState._resolveShipOverlap = function (ship1, ship2) {
-	//TODO: fix MINOR bug - resolving overlap can illegally push a ship outside the boundsRect
-	var p1 = new Phaser.Point(ship1.x, ship1.y);
-	var p2 = new Phaser.Point(ship2.x, ship2.y);
-	ship1.body.velocity.x = 5*(p1.x - p2.x);
-	ship1.body.velocity.y = 5*(p1.y - p2.y);
+	let p1 = new Phaser.Point(ship1.x, ship1.y);
+	let p2 = new Phaser.Point(ship2.x, ship2.y);
+	let dir = new Phaser.Point(p1.x - p2.x, p1.y - p2.y).normalize();
+	ship1.body.velocity.x = 1000*dir.x;
+	ship1.body.velocity.y = 1000*dir.y;
+	ship2.body.velocity.x = 0;
+	ship2.body.velocity.y = 0;
 }
