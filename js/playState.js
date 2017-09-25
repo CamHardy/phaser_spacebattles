@@ -8,40 +8,27 @@ PlayState.init = function () {
 
 PlayState.create = function () {
 	// create level
-	let background = game.add.sprite(0, 0, 'background');
-	background.width = game.width;
-	background.height = game.height;
+	this.background = game.add.sprite(0, 0, 'background');
+	this.background.width = game.width;
+	this.background.height = game.height;
 
-	// TODO: need one array of ships (player's and opponent's)
-	// for now place them manually
-	this.ship1 = game.add.sprite(100, 100, 'ship');
-	this.ship1.anchor.set(0.5, 0.5);
-	this.ship1.width = 50;
-	this.ship1.height = 37;
-	this.ship1.inputEnabled = true;
-	this.ship1.input.enableDrag(false, true);
-	this.ship1.input.pixelPerfectClick = true;
-	this.ship1.input.boundsRect = background;
-	game.physics.enable(this.ship1);
-	this.ship1.events.onInputDown.add(function () {this.ship1.alpha = 0.3; this.ship1.body.enable = false;}, this);
-	this.ship1.events.onInputUp.add(function () {this.ship1.alpha = 1; this.ship1.body.enable = true;}, this);
-
-	this.ship2 = game.add.sprite(150, 100, 'ship');
-	this.ship2.inputEnabled = true;
-	this.ship2.input.enableDrag(false, true);
-	this.ship2.input.pixelPerfectClick = true;
-	this.ship2.input.boundsRect = background;
-	game.physics.enable(this.ship2);
-	this.ship2.events.onInputDown.add(function () {this.ship2.alpha = 0.3; this.ship2.body.enable = false;}, this);
-	this.ship2.events.onInputUp.add(function () {this.ship2.alpha = 1; this.ship2.body.enable = true;}, this);
+	this.ships = game.add.group();
+	this.ship1 = new Ship(game, 100, 100);
+	this.ships.add(this.ship1);
+	this.ship2 = new Ship(game, 200, 100);
+	this.ships.add(this.ship2);
 };
 
 PlayState.update = function () {
 	// handle input
 	// update stuff
-	game.physics.arcade.overlap(this.ship1, this.ship2, this._resolveOverlap, null, this);
+	game.physics.arcade.overlap(this.ships, this.ships, this._resolveShipOverlap, null, this);
 }
 
-PlayState._resolveOverlap = function () {
-	console.log('Overlap AAAAAAAAAAAAA');
+PlayState._resolveShipOverlap = function (ship1, ship2) {
+	//TODO: fix MINOR bug - resolving overlap can illegally push a ship outside the boundsRect
+	var p1 = new Phaser.Point(ship1.x, ship1.y);
+	var p2 = new Phaser.Point(ship2.x, ship2.y);
+	ship1.body.velocity.x = 5*(p1.x - p2.x);
+	ship1.body.velocity.y = 5*(p1.y - p2.y);
 }
